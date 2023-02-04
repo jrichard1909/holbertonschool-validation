@@ -1,0 +1,28 @@
+
+
+name: module3_task2
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  validate:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd module3_task2 && ./setup.sh
+      - run: make lint -C module3_task2/
+      - run: make build -C module3_task2/
+      - run: make package -C module3_task2/
+      - run: |
+          make unit-tests -C module3_task2/
+          make integration-tests -C module3_task2/
+          make validate -C module3_task2/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Archive awesome-website.zip as artifact
+          path: module3_task2/awesome-website.zip
